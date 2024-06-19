@@ -13,3 +13,6 @@ env.bak/
 venv.bak/
 
 .idea/
+
+credentials/*
+oauth_credentials/*

@@ -7,7 +7,6 @@ from fastapi import HTTPException
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from pydantic import TypeAdapter
 
 import models
 
@@ -18,6 +17,25 @@ __all__ = (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def map_event(event: dict) -> models.CalendarEvent:
+    return models.CalendarEvent(
+        id=event['id'],
+        summary=event['summary'],
+        start=models.CalendarDateTime(
+            date_time=datetime.fromisoformat(event['start']['dateTime']),
+            time_zone=event['start']['timeZone'],
+        ),
+        end=models.CalendarDateTime(
+            date_time=datetime.fromisoformat(event['end']['dateTime']),
+            time_zone=event['end']['timeZone'],
+        ),
+    )
+
+
+def map_events(events: Iterable[dict]) -> list[models.CalendarEvent]:
+    return [map_event(event) for event in events]
 
 
 def get_utc_now() -> datetime:
@@ -63,8 +81,6 @@ class CalendarApiConnection:
             calendar_id: str = 'primary',
             max_results: int = 10,
     ) -> list[models.CalendarEvent]:
-        type_adapter = TypeAdapter(list[models.CalendarEvent])
-
         now = f'{datetime.utcnow().isoformat()}Z'
         logger.info(f'Getting the upcoming {max_results} events')
 
@@ -90,4 +106,4 @@ class CalendarApiConnection:
             )
 
         events = events_result.get('items', [])
-        return type_adapter.validate_python(events)
+        return map_events(events)
