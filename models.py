@@ -8,7 +8,7 @@ __all__ = (
 )
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass
 class CalendarDateTime:
     date_time: datetime
     time_zone: str
@@ -18,7 +18,7 @@ class CalendarDateTime:
         return self.date_time.astimezone(ZoneInfo('UTC'))
 
 
-@dataclass(frozen=True, slots=True)
+@dataclass
 class CalendarEvent:
     id: str
     start: CalendarDateTime
