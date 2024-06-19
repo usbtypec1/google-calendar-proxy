@@ -3,7 +3,6 @@ from collections.abc import Iterable
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from fastapi import HTTPException
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
@@ -100,10 +99,7 @@ class CalendarApiConnection:
 
         except HttpError as error:
             logger.exception(f'An error occurred', exc_info=error)
-            raise HTTPException(
-                status_code=error.status_code,
-                detail=str(error),
-            )
+            raise
 
         events = events_result.get('items', [])
         return map_events(events)
