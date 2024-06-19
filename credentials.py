@@ -1,5 +1,6 @@
 import logging
 import pathlib
+from typing import Optional
 
 from google.oauth2.credentials import Credentials
 
@@ -26,7 +27,7 @@ def load_all_credentials() -> dict[str, Credentials]:
     return unit_id_to_credentials
 
 
-def load_unit_credentials(unit_id: str) -> Credentials | None:
+def load_unit_credentials(unit_id: str) -> Optional[Credentials]:
     tokens_directory = pathlib.Path(__file__).parent / 'credentials'
     tokens_directory.mkdir(exist_ok=True)
 
